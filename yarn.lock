@@ -38,7 +38,7 @@
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/@sinonjs/samsam/-/samsam-2.1.2.tgz#16947fce5f57258d01f1688fdc32723093c55d3f"
 
-"@tryghost/html-to-mobiledoc@0.1.2":
+"@tryghost/html-to-mobiledoc@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@tryghost/html-to-mobiledoc/-/html-to-mobiledoc-0.1.2.tgz#351910a5da61d930a964d95aaa6e786e81859dbc"
   dependencies:
