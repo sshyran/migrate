@@ -32,17 +32,23 @@ const mediumScraper = new MgScraper(scrapeConfig);
  * @param {String} pathToZip
  * @param {Boolean} verbose
  */
-module.exports.migrate = async (pathToZip) => {
+module.exports.migrate = async (pathToZip, options) => {
     // 1. Read the zip file
     let result = mediumIngest(pathToZip);
 
     // 2. Pass the results through the web scraper to get any missing data
-    result = await mediumScraper.hydrate(result);
+    if (options.scrape === 'all' || options.scrape === 'web') {
+        result = await mediumScraper.hydrate(result);
+    }
 
     // 3. Format the data as a valid Ghost JSON file
     result = mgJSON.toGhostJSON(result);
 
     // 4. Pass the JSON file through the image scraper
+    if (options.scrape === 'all' || options.scrape === 'img') {
+        // @TODO: image scraping
+        result = result;
+    }
 
     // 5. Convert post HTML -> MobileDoc
     result = mgHtmlMobiledoc.convert(result);
