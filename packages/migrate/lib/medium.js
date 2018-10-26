@@ -2,7 +2,7 @@ const mediumIngest = require('@tryghost/mg-medium-export');
 const mgJSON = require('@tryghost/mg-json');
 const MgScraper = require('@tryghost/mg-webscraper');
 const mgHtmlMobiledoc = require('@tryghost/mg-html-mobiledoc');
-const fs = require('./fs');
+const fsUtils = require('@tryghost/mg-fs-utils');
 
 const scrapeConfig = {
     posts: {
@@ -54,7 +54,7 @@ module.exports.migrate = async (pathToZip, options) => {
     result = mgHtmlMobiledoc.convert(result);
 
     // 6. Write a valid Ghost import zip
-    let filename = fs.writeFile(result);
+    let filename = fsUtils.writeJSONFile(result);
 
     // 7. Return the path to the file
     return filename;
