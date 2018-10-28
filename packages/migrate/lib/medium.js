@@ -1,6 +1,7 @@
 const mediumIngest = require('@tryghost/mg-medium-export');
 const mgJSON = require('@tryghost/mg-json');
 const MgScraper = require('@tryghost/mg-webscraper');
+const MgImageScraper = require('@tryghost/mg-imagescraper');
 const mgHtmlMobiledoc = require('@tryghost/mg-html-mobiledoc');
 const fsUtils = require('@tryghost/mg-fs-utils');
 
@@ -22,8 +23,6 @@ const scrapeConfig = {
     }
 };
 
-const mediumScraper = new MgScraper(scrapeConfig);
-
 /**
  * Migrate from Medium
  *
@@ -33,8 +32,10 @@ const mediumScraper = new MgScraper(scrapeConfig);
  * @param {Boolean} verbose
  */
 module.exports.migrate = async (pathToZip, options) => {
-    // 0. Prep a file cache to keep our output
+    // 0. Prep a file cache & scrapers
     let fileCache = new fsUtils.FileCache(pathToZip);
+    let imageScraper = new MgImageScraper(fileCache);
+    let mediumScraper = new MgScraper(scrapeConfig);
 
     // 1. Read the zip file
     let result = mediumIngest(pathToZip);
@@ -50,7 +51,7 @@ module.exports.migrate = async (pathToZip, options) => {
     // 4. Pass the JSON file through the image scraper
     if (options.scrape === 'all' || options.scrape === 'img') {
         // @TODO: image scraping
-        result = result;
+        result = await imageScraper.fetch(result);
     }
 
     // 5. Convert post HTML -> MobileDoc
@@ -58,8 +59,8 @@ module.exports.migrate = async (pathToZip, options) => {
 
     // 6. Write a valid Ghost import zip
     // @TODO: write the zip, not just a JSON file
-    fileCache.writeJSONFile(result);
+    let filename = fileCache.writeJSONFile(result);
 
     // 7. Return the path to the file
-    return fileCache.JSONFileName;
+    return filename;
 };
